@@ -71,7 +71,7 @@ A aplicação estará disponível em [http://localhost:8501](http://localhost:85
 ## **Estrutura do Projeto**
 
 ```plaintext
-nome-do-repositorio/
+GreenWashing Score/
 ├── app.py                 # Arquivo principal da aplicação Streamlit
 ├── analysis/
 │   ├── risk_scoring.py    # Módulo para cálculo da pontuação de risco
