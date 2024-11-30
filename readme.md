@@ -139,6 +139,6 @@ Contribuições são bem-vindas! Siga os passos abaixo para colaborar:
 
 ## **Contato**
 Para dúvidas ou suporte, entre em contato:
-- **E-mail:** seuemail@exemplo.com
+- **E-mail:** micaelle.osouza@gmail.com
 - **GitHub:** [Micaelle Souza](https://github.com/micaelleos)
 
