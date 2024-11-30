@@ -1,4 +1,4 @@
-# **Análise de Relatórios de ECG e Detecção de Greenwashing**
+# **Análise de Relatórios de ESG e Detecção de Greenwashing**
 
 Este projeto é uma aplicação interativa desenvolvida com **Streamlit**, **LangChain**, e **LangGraph**, projetada para realizar a ingestão e análise de relatórios de Empresas com Compromissos com o Meio Ambiente, Social e Governança (ESG, na sigla em inglês). A ferramenta identifica potenciais indícios de **greenwashing** nos relatórios e atribui uma pontuação com base em critérios específicos. O usuário pode também pesquisar informações no documento por meio de um chat baseado em recuperação de conhecimento (*Retrieval-Augmented Generation* - RAG).
 
