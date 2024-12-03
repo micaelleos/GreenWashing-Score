@@ -1,7 +1,7 @@
 
 import streamlit as st
 import time
-
+from src.scripts.chat.chat_rag import Bot
 
 st.html(
     '''
@@ -32,6 +32,8 @@ if "messages" not in st.session_state:
 
 if "issues" not in st.session_state:
     st.session_state.issues = []
+
+bot = Bot()
 
 with st.container():
     col1, col2 = st.columns([0.8,0.2])
@@ -65,11 +67,10 @@ def atualizar_chat(chat_container,prompt=None):
         if prompt:
             with st.chat_message("assistant"):
                 with st.spinner(''):
-                    response="Olá como posso ajudá-lo?"
+                    response=bot.chat(prompt)
                 st.write_stream(response_generator(response))
 
             st.session_state.messages.append({"role": "assistant", "content": response})
-            print(st.session_state.messages)
 
 
 chat_container = st.container(height=400,border=False)
