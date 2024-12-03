@@ -5,6 +5,7 @@ from langgraph.prebuilt import create_react_agent
 from langchain_openai import ChatOpenAI
 from src.scripts.chat.document_loader import tools
 from langchain_core.messages import AIMessage
+from src.scripts.prompt import prompt
 
 @st.cache_resource()
 def memory():
@@ -18,7 +19,7 @@ class Bot():
         self.llm = ChatOpenAI(model="gpt-4o",api_key=self.OPENAI_API_KEY)
         self.memory = memory()
         self.tools = tools
-        self.agent_executor = create_react_agent(self.llm, self.tools, checkpointer=self.memory)
+        self.agent_executor = create_react_agent(self.llm, self.tools, checkpointer=self.memory, state_modifier=prompt)
 
         self.config = {"configurable": {"thread_id": "def234"}}
 

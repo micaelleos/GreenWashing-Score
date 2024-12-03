@@ -35,7 +35,7 @@ def doc_spliters(diretorio):
     )
 
     doc_splits = text_splitter.split_documents(docs)
-    
+    print("Quantidade de chunks:",len(doc_splits))
     arquivos = [arquivo for arquivo in os.listdir(diretorio) if arquivo.endswith('.pdf')]
     for arquivo in arquivos:
         shutil.move(UPLOAD_DIR+arquivo, PROCESSED_DOC+arquivo)
@@ -74,7 +74,7 @@ def vector_store():
 def retrieve(query: str):
     """Retrieve information related to a query."""
     vectorstore = vector_store()
-    retrieved_docs = vectorstore.similarity_search(query, k=2)
+    retrieved_docs = vectorstore.similarity_search(query, k=24)
     serialized = "\n\n".join(
         (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
         for doc in retrieved_docs
