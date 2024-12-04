@@ -11,11 +11,12 @@ import chromadb
 import uuid
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain.storage import InMemoryByteStore
-
+from langchain.memory.entity import SQLiteEntityStore
+import streamlit as st
 
 UPLOAD_DIR = "data/stage/"
 PROCESSED_DOC = "data/processed/"
-PERSIST_DIR="./../../../data/"
+PERSIST_DIR="data/"
 
 OPENAI_API_KEY=os.getenv('OPEN_API_KEY')
 
@@ -66,8 +67,11 @@ def load_doc_family_to_db(sub_docs,doc_ids,docs):
     retriever.vectorstore.add_documents(sub_docs)
     retriever.docstore.mset(list(zip(doc_ids, docs)))
 
+@st.cache_resource()
 def family_db_retriever():
-        # The storage layer for the parent documents
+    # The storage layer for the parent documents
+    #db_name = PERSIST_DIR + "entities.db"
+    #store = SQLiteEntityStore(connection_string="sqlite:///meu_banco_de_dados.db",db_file=db_name)
     store = InMemoryByteStore()
     id_key = "doc_id"
     vectorstore = vector_store()

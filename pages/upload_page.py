@@ -13,7 +13,7 @@ if uploaded_file is not None:
         with st.spinner('Preprocessing file...'):
             #load_doc_pipeline()
             load_doc_family_pipeline()
-        st.success("Docmuent loaded!")
+        st.success("Document loaded!")
 
     except ValueError as e:
         st.error("O documento está vazio (não possui caracteres). Por favor, faça um novo upload.")
