@@ -67,7 +67,6 @@ def load_doc_family_to_db(sub_docs,doc_ids,docs):
     retriever.vectorstore.add_documents(sub_docs)
     retriever.docstore.mset(list(zip(doc_ids, docs)))
 
-@st.cache_resource()
 def family_db_retriever():
     # The storage layer for the parent documents
     #db_name = PERSIST_DIR + "entities.db"
@@ -150,7 +149,7 @@ def retriever(query: str):
 
 
 
-tools = [retrieve_family]#[retrieve]
+tools = [retrieve] #[retrieve_family]
 
 if __name__ == "__main__":
     print(retriever("IN441"))

@@ -11,8 +11,8 @@ if uploaded_file is not None:
         save_uploadedfile(uploaded_file)
     try:
         with st.spinner('Preprocessing file...'):
-            #load_doc_pipeline()
-            load_doc_family_pipeline()
+            load_doc_pipeline()
+            #load_doc_family_pipeline()
         st.success("Document loaded!")
 
     except ValueError as e:
