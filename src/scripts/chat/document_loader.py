@@ -8,6 +8,9 @@ import chromadb
 from langchain_core.tools import tool
 import shutil
 import chromadb 
+import uuid
+from langchain.retrievers.multi_vector import MultiVectorRetriever
+from langchain.storage import InMemoryByteStore
 
 
 UPLOAD_DIR = "data/stage/"
@@ -42,6 +45,39 @@ def doc_spliters(diretorio):
 
     return doc_splits
 
+def doc_spliters_child(doc_parent_splits):
+    id_key = "doc_id"
+    doc_ids = [str(uuid.uuid4()) for _ in doc_parent_splits]
+    # The splitter to use to create smaller chunks
+    child_text_splitter = RecursiveCharacterTextSplitter(chunk_size=400)
+
+    sub_docs = []
+    for i, doc in enumerate(doc_parent_splits):
+        _id = doc_ids[i]
+        _sub_docs = child_text_splitter.split_documents([doc])
+        for _doc in _sub_docs:
+            _doc.metadata[id_key] = _id
+        sub_docs.extend(_sub_docs)
+    
+    return sub_docs,doc_ids
+    
+def load_doc_family_to_db(sub_docs,doc_ids,docs):
+    retriever = family_db_retriever()
+    retriever.vectorstore.add_documents(sub_docs)
+    retriever.docstore.mset(list(zip(doc_ids, docs)))
+
+def family_db_retriever():
+        # The storage layer for the parent documents
+    store = InMemoryByteStore()
+    id_key = "doc_id"
+    vectorstore = vector_store()
+    # The retriever (empty to start)
+    retriever = MultiVectorRetriever(
+        vectorstore=vectorstore,
+        byte_store=store,
+        id_key=id_key,
+    )  
+    return retriever
 
 def load_doc_to_db(doc_splits):
     
@@ -59,6 +95,12 @@ def load_doc_to_db(doc_splits):
 def load_doc_pipeline():
     doc_splits = doc_spliters(UPLOAD_DIR)
     load_doc_to_db(doc_splits)
+
+def load_doc_family_pipeline():
+    doc_parent_splits = doc_spliters(UPLOAD_DIR)
+    sub_docs,doc_ids = doc_spliters_child(doc_parent_splits)
+    load_doc_family_to_db(sub_docs,doc_ids,doc_parent_splits)
+    
 
 def vector_store():
     embeddings = OpenAIEmbeddings(model="text-embedding-3-large", api_key=OPENAI_API_KEY)
@@ -81,6 +123,17 @@ def retrieve(query: str):
     )
     return serialized, retrieved_docs
 
+@tool(response_format="content_and_artifact")
+def retrieve_family(query: str):
+    """Retrieve information related to a query."""
+    retriever = family_db_retriever()
+    retrieved_docs = retriever.vectorstore.similarity_search(query, k=24)
+    serialized = "\n\n".join(
+        (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
+        for doc in retrieved_docs
+    )
+    return serialized, retrieved_docs
+
 def retriever(query: str):
     """Retrieve information related to a query."""
     vectorstore = vector_store()
@@ -93,7 +146,7 @@ def retriever(query: str):
 
 
 
-tools = [retrieve]
+tools = [retrieve_family]#[retrieve]
 
 if __name__ == "__main__":
     print(retriever("IN441"))
