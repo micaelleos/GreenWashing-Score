@@ -11,11 +11,11 @@ import chromadb
 import uuid
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain.storage import InMemoryByteStore
-
+from langchain_core.documents import Document
 
 UPLOAD_DIR = "data/stage/"
 PROCESSED_DOC = "data/processed/"
-PERSIST_DIR="./../../../data/"
+PERSIST_DIR="data/"
 
 OPENAI_API_KEY=os.getenv('OPEN_API_KEY')
 
@@ -45,26 +45,36 @@ def doc_spliters(diretorio):
 
     return doc_splits
 
-def doc_spliters_child(doc_parent_splits):
+def doc_spliters_family(diretorio):
+        # Load PDF
+    loaders = loaders = [PyPDFLoader(UPLOAD_DIR+arquivo) for arquivo in os.listdir(diretorio) if arquivo.endswith('.pdf')]
+    docs = []
+
+    for loader in loaders:
+        docs.extend(loader.load())
+
+    text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
+        chunk_size=2000, chunk_overlap=300
+    )
+
+    doc_splits = text_splitter.split_documents(docs)
     id_key = "doc_id"
-    doc_ids = [str(uuid.uuid4()) for _ in doc_parent_splits]
-    # The splitter to use to create smaller chunks
+   
     child_text_splitter = RecursiveCharacterTextSplitter(chunk_size=400)
 
     sub_docs = []
-    for i, doc in enumerate(doc_parent_splits):
-        _id = doc_ids[i]
+    for doc in doc_splits:
+        id = str(uuid.uuid4())
+        doc.metadata[id_key] = id
+        doc.metadata["type"] = "parent"
         _sub_docs = child_text_splitter.split_documents([doc])
         for _doc in _sub_docs:
-            _doc.metadata[id_key] = _id
+            _doc.metadata[id_key] = id
+            _doc.metadata["type"] = "child"
         sub_docs.extend(_sub_docs)
-    
-    return sub_docs,doc_ids
-    
-def load_doc_family_to_db(sub_docs,doc_ids,docs):
-    retriever = family_db_retriever()
-    retriever.vectorstore.add_documents(sub_docs)
-    retriever.docstore.mset(list(zip(doc_ids, docs)))
+
+    return doc_splits, sub_docs
+
 
 def family_db_retriever():
         # The storage layer for the parent documents
@@ -96,11 +106,15 @@ def load_doc_pipeline():
     doc_splits = doc_spliters(UPLOAD_DIR)
     load_doc_to_db(doc_splits)
 
+def load_doc_family_to_db(doc_splits, sub_docs):
+    db = vector_store()
+    db.add_documents(doc_splits)
+    db.add_documents(sub_docs)
+
 def load_doc_family_pipeline():
-    doc_parent_splits = doc_spliters(UPLOAD_DIR)
-    sub_docs,doc_ids = doc_spliters_child(doc_parent_splits)
-    load_doc_family_to_db(sub_docs,doc_ids,doc_parent_splits)
-    
+    doc_splits, sub_docs = doc_spliters_family(UPLOAD_DIR)
+    load_doc_family_to_db(doc_splits, sub_docs)
+
 
 def vector_store():
     embeddings = OpenAIEmbeddings(model="text-embedding-3-large", api_key=OPENAI_API_KEY)
@@ -112,6 +126,40 @@ def vector_store():
     return vectorstore
 
 
+def format_doc(doc_list):
+    docs=[]
+    for doc in doc_list:
+        document = Document(
+            page_content=doc['documents'][0],
+            metadata=doc['metadatas'][0]
+        )
+        docs.append(document)
+    return docs
+
+@tool(response_format="content_and_artifact")
+def custom_retriver(query: str):
+    """Retrieve information related to a query."""
+    db = vector_store()
+    retriever = db.as_retriever()
+    child_docs = retriever.vectorstore.max_marginal_relevance_search(query, k=14,fetch_k=5,filter={'type':'child'})
+    print("child_docs",child_docs)
+    doc_id = []
+    for doc in child_docs:
+        if doc.metadata['doc_id'] not in doc_id:
+            doc_id.append(doc.metadata['doc_id'])
+
+    docs = []
+    for id in doc_id:
+        docs.append(retriever.vectorstore.get(where={"$and": [{"doc_id": {"$eq":f"{id}" }},{"type": {"$eq": 'parent'}}]}))
+    
+    formated_docs = format_doc(docs)
+    print("formated_docs",formated_docs)
+    serialized = "\n\n".join(
+        (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
+        for doc in formated_docs
+    )
+    return serialized, formated_docs
+
 @tool(response_format="content_and_artifact")
 def retrieve(query: str):
     """Retrieve information related to a query."""
@@ -121,6 +169,8 @@ def retrieve(query: str):
         (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
         for doc in retrieved_docs
     )
+    print(len(serialized), len(retrieved_docs))
+    print(serialized, retrieved_docs)
     return serialized, retrieved_docs
 
 @tool(response_format="content_and_artifact")
@@ -145,8 +195,7 @@ def retriever(query: str):
     return serialized, retrieved_docs
 
 
-
-tools = [retrieve_family]#[retrieve]
+tools = [custom_retriver]#[retrieve]
 
 if __name__ == "__main__":
     print(retriever("IN441"))
