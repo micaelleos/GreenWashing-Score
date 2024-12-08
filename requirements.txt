@@ -9,3 +9,4 @@ tiktoken
 langchain-chroma
 langgraph
 streamlit
+langchain-anthropic

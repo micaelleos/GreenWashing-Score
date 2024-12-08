@@ -5,7 +5,7 @@ from langgraph.prebuilt import create_react_agent
 from langchain_openai import ChatOpenAI
 from src.scripts.chat.document_loader import tools
 from langchain_core.messages import AIMessage
-from src.scripts.prompt import prompt
+from src.scripts.chat.prompt import prompt
 
 @st.cache_resource()
 def memory():

@@ -19,6 +19,27 @@ PERSIST_DIR="data/"
 
 OPENAI_API_KEY=os.getenv('OPEN_API_KEY')
 
+def retrieve_sections():
+    db = vector_store()
+    retriever = db.as_retriever()
+    result = retriever.vectorstore.get(where={"type": {"$eq": 'parent'}})
+    docs=[]
+    for i,id in enumerate(result['ids']):
+        if len(result['documents'][i]) > 500:
+            docs.append({'ids':id,'documents':result['documents'][i],"metadatas":result['metadatas'][i]})
+    return docs
+
+def retrieve_sections_page(initial_page:int,final_page:int):
+    db = vector_store()
+    retriever = db.as_retriever()
+    result = retriever.vectorstore.get(where={"type": {"$eq": 'parent'}})
+    docs=[]
+    for i,id in enumerate(result['ids']):
+        if int(result['metadatas'][i]['page']) <= final_page and int(result['metadatas'][i]['page']) >= initial_page:
+            if len(result['documents'][i]) > 500:
+                docs.append({'ids':id,'documents':result['documents'][i],"metadatas":result['metadatas'][i]})
+    return docs
+
 def save_uploadedfile(uploadedfile):
     if not os.path.exists(UPLOAD_DIR):
         os.makedirs(UPLOAD_DIR)
@@ -142,7 +163,7 @@ def custom_retriver(query: str):
     db = vector_store()
     retriever = db.as_retriever()
     child_docs = retriever.vectorstore.max_marginal_relevance_search(query, k=14,fetch_k=5,filter={'type':'child'})
-    print("child_docs",child_docs)
+
     doc_id = []
     for doc in child_docs:
         if doc.metadata['doc_id'] not in doc_id:
@@ -153,7 +174,7 @@ def custom_retriver(query: str):
         docs.append(retriever.vectorstore.get(where={"$and": [{"doc_id": {"$eq":f"{id}" }},{"type": {"$eq": 'parent'}}]}))
     
     formated_docs = format_doc(docs)
-    print("formated_docs",formated_docs)
+
     serialized = "\n\n".join(
         (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
         for doc in formated_docs
@@ -177,7 +198,7 @@ def retrieve(query: str):
 def retrieve_family(query: str):
     """Retrieve information related to a query."""
     retriever = family_db_retriever()
-    retrieved_docs = retriever.vectorstore.similarity_search(query, k=24)
+    retrieved_docs = retriever.vectorstore.similarity_search(query, k=8)
     serialized = "\n\n".join(
         (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
         for doc in retrieved_docs

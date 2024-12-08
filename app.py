@@ -2,15 +2,16 @@ import streamlit as st
 
 pages = {
     "Menu": [
-        st.Page("./pages/chat_page.py", title="Chat com assistente"),
-        st.Page("./pages/upload_page.py", title="Upload"),
-        st.Page("./pages/score_page.py", title="Score"),
+        st.Page("./page/chat_page.py", title="Chat com assistente"),
+        st.Page("./page/upload_page.py", title="Upload"),
+        st.Page("./page/score_page.py", title="Análise"),
+        st.Page("./page/criterios_page.py", title="Critérios de Análise"),
     ],
     "Recursos": [
-         st.Page("./pages/about_page.py", title="About"),
+         st.Page("./page/about_page.py", title="Sobre"),
      ]
 }
 
-st.logo("./src/img/logo.png", size="large") # icon_image="./src/img/jira_logo.png"
+#st.logo("./src/img/logo.png", size="large") # icon_image="./src/img/jira_logo.png"
 pg = st.navigation(pages)
 pg.run()
