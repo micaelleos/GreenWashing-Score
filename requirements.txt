@@ -9,4 +9,3 @@ tiktoken
 langchain-chroma
 langgraph
 streamlit
-sqlite3
