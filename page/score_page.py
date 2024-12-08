@@ -9,7 +9,7 @@ with cols[1]:
     final_page = st.text_input('Página final')
 
 
-@st.dialog("Mostrar Trecho")
+@st.dialog("Mostrar Trecho do Relatório")
 def mostrar(item):
     st.write(item)
 
