@@ -14,7 +14,6 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
-from langchain_anthropic import ChatAnthropic
 PERSIST_DIR="../data"
 OPENAI_API_KEY = os.environ['OPEN_API_KEY']
 CLAUDE_API = os.environ['CLAUDE_API']
