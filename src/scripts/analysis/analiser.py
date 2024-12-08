@@ -16,7 +16,6 @@ from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
 PERSIST_DIR="../data"
 OPENAI_API_KEY = os.environ['OPEN_API_KEY']
-CLAUDE_API = os.environ['CLAUDE_API']
 # Classe para representar um critério individual
 class Avaliacao(TypedDict):
     nome_criterio: Annotated[str, "Nome do critério que está sendo avaliado"]
