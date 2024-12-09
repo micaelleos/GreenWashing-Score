@@ -33,12 +33,13 @@ class AgentState(MessagesState):
     final_response: Criterios
 
 
-class GreenAgent:
+class GreenAgent():
 
     def __init__(self):
 
         self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2,openai_api_key=OPENAI_API_KEY) #ChatAnthropic(model='claude-3-opus-20240229',api_key=CLAUDE_API) 
         self.tools = tools
+        print(self.tools)
         self.model_with_tools = self.llm.bind_tools(self.tools)
         self.model_with_structured_output = self.llm.with_structured_output(Criterios)
         self.memory = MemorySaver()
