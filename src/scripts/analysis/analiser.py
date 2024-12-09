@@ -7,7 +7,7 @@ from langgraph.graph import MessagesState
 from typing_extensions import Annotated, TypedDict
 import uuid
 from src.scripts.analysis.prompt import *
-from src.scripts.chat.document_loader import custom_retriver, retrieve_sections, retrieve_sections_page
+from src.scripts.chat.document_loader import custom_retriver, retrieve_sections, retrieve_sections_page, tools
 from langchain_openai import ChatOpenAI
 
 from langgraph.graph import StateGraph, END
@@ -35,12 +35,10 @@ class AgentState(MessagesState):
 
 class GreenAgent:
 
-    tools = [custom_retriver]
-
     def __init__(self):
 
         self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2,openai_api_key=OPENAI_API_KEY) #ChatAnthropic(model='claude-3-opus-20240229',api_key=CLAUDE_API) 
-        self.model_with_tools = self.llm.bind_tools(self.tools)
+        self.model_with_tools = self.llm.bind_tools(tools)
         self.model_with_structured_output = self.llm.with_structured_output(Criterios)
         self.memory = MemorySaver()
 
@@ -50,7 +48,7 @@ class GreenAgent:
         # Define the two nodes we will cycle between
         self.workflow.add_node("agent", self.call_model)
         self.workflow.add_node("respond", self.respond)
-        self.workflow.add_node("tools", ToolNode(self.tools))
+        self.workflow.add_node("tools", ToolNode(tools))
 
         # Set the entrypoint as `agent`
         # This means that this node is the first one called
