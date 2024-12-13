@@ -179,7 +179,7 @@ def custom_retriver(query: str):
     formated_docs = format_doc(docs)
 
     serialized = "\n\n".join(
-        (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
+        (f"Termo de pesquisa: {query} Source: {doc.metadata}\n" f"Content: {doc.page_content}")
         for doc in formated_docs
     )
     return serialized, formated_docs
