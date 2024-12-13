@@ -109,6 +109,7 @@ class GreenAgent():
             doc_analized["analise"] = answer['final_response']
             doc_analized["history"] = answer['messages']
             docs_analized.append(doc_analized)
+        print("finalizou")
         return docs_analized
     
     def analizer_full_document(self):
