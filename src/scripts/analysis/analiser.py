@@ -37,7 +37,7 @@ class GreenAgent():
 
     def __init__(self):
 
-        self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2,openai_api_key=OPENAI_API_KEY) #ChatAnthropic(model='claude-3-opus-20240229',api_key=CLAUDE_API) 
+        self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2,top_p=0.3,openai_api_key=OPENAI_API_KEY) #ChatAnthropic(model='claude-3-opus-20240229',api_key=CLAUDE_API) 
         self.tools = tools
         print(self.tools)
         self.model_with_tools = self.llm.bind_tools(self.tools)
