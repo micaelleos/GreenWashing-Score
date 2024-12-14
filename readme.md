@@ -35,8 +35,8 @@ Certifique-se de que você tem as seguintes ferramentas instaladas:
 
 ### **Passo 1: Clone o Repositório**
 ```bash
-git clone https://github.com/seuusuario/nome-do-repositorio.git
-cd nome-do-repositorio
+git clone https://github.com/micaelleos/GreenWashing-Score.git
+cd GreenWashing-Score
 ```
 
 ### **Passo 2: Crie um Ambiente Virtual**
