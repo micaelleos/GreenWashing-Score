@@ -99,7 +99,7 @@ def doc_spliters_family(diretorio):
 
     arquivos = [arquivo for arquivo in os.listdir(diretorio) if arquivo.endswith('.pdf')]
     for arquivo in arquivos:
-        shutil.move(UPLOAD_DIR+arquivo, PROCESSED_DOC+arquivo)
+        shutil.move(UPLOAD_DIR+arquivo, PROCESSED_DOC)
 
     return doc_splits, sub_docs
 
