@@ -1,103 +1,60 @@
 import streamlit as st
-from src.scripts.analysis.analiser import GreenAgent
-from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
-import threading
-from streamlit.runtime.scriptrunner import add_script_run_ctx
-
-# Function to run in a separate thread
-def long_running_task(initial_page, final_page):
-    try:
-        bot = GreenAgent()
-        result = bot.analizer_page(int(initial_page), int(final_page))
-        
-        # Use a thread-safe way to update session state
-        st.session_state['analise'] = result
-        st.session_state['analise_status'] = "Completed"
-    except Exception as e:
-        st.session_state['analise_status'] = "Error"
-        st.session_state['analise_error'] = str(e)
-
-def start_analysis(initial_page, final_page):
-    # Reset status and create a new thread
-    st.session_state.analise_status = "Running"
-    st.session_state.analise = []
-    
-    # Create and start the thread with Streamlit context
-    thread = threading.Thread(target=long_running_task, args=(initial_page, final_page))
-    
-    # This is the key addition to fix the threading context issue
-    add_script_run_ctx(thread)
-    thread.start()
 
 
-st.title('Análise do Documento')
-st.write("Escolha as páginas do relatório para serem feitas as análises:")
+texto = """
+### **Metodologia GRI: O Padrão Global para Relatórios de Sustentabilidade**  
 
-# Initialize session state variables if they don't exist
-if 'analise_status' not in st.session_state:
-    st.session_state.analise_status = None
+A **metodologia GRI (Global Reporting Initiative)** é um conjunto de padrões reconhecidos internacionalmente para a elaboração de relatórios de sustentabilidade. Criada com o objetivo de fornecer diretrizes claras e abrangentes para empresas e organizações, a metodologia GRI busca promover a transparência e a comparabilidade das informações relacionadas aos impactos econômicos, ambientais e sociais das atividades corporativas.  
 
-if 'analise' not in st.session_state:
-    st.session_state.analise = []
+### **Origem e Objetivo**  
+A GRI foi fundada em 1997 como uma iniciativa conjunta do CERES (Coalition for Environmentally Responsible Economies) e do PNUMA (Programa das Nações Unidas para o Meio Ambiente). Seu objetivo principal é ajudar empresas a relatar seus impactos de forma padronizada e acessível, promovendo a responsabilidade corporativa e a tomada de decisão sustentável.  
 
-# Input columns for page range
-cols = st.columns([0.5, 0.5])
-with cols[0]:
-    initial_page = st.text_input('Página inicial')
-with cols[1]:
-    final_page = st.text_input('Página final')
+### **Princípios da Metodologia GRI**  
+A metodologia se baseia em **princípios fundamentais** que orientam a elaboração de relatórios:  
 
-# Submit button
-if st.button("Iniciar Análise"):
-    start_analysis(initial_page, final_page)
+1. **Clareza**: Garantir que as informações sejam compreensíveis para todos os stakeholders.  
+2. **Comparabilidade**: Permitir que diferentes relatórios sejam comparados ao longo do tempo ou entre organizações.  
+3. **Exaustividade**: Incluir todos os impactos materiais significativos.  
+4. **Precisão**: Apresentar informações confiáveis e verificáveis.  
+5. **Equilíbrio**: Relatar tanto os sucessos quanto os desafios.  
+6. **Pontualidade**: Garantir que os relatórios sejam elaborados em tempo hábil para decisões informadas.  
 
-# Progress and results display
-if st.session_state.analise_status == "Running":
-    st.spinner("Análise em andamento...")
-    st.write("Processando análise. Você pode navegar em outras páginas enquanto isso.")
+### **Estrutura dos Padrões GRI**  
+Os padrões GRI são organizados em três categorias principais:  
 
-# Check for completed analysis
-if st.session_state.analise_status == "Completed":
-    st.success("Análise concluída!")
-    
-    # Display results
-    for doc in st.session_state.analise:
-        with st.container(border=True):
-            # Expandable section for document details
-            st.write(f"**Documento ID**: {doc['ids']}")            
-            # Metadata display
-            colsx = st.columns([0.5, 0.5])
-            with colsx[0]:
-                st.markdown(f"**Documento**: {doc['metadatas']['source']}")
-            with colsx[1]:
-                st.markdown(f"**Página**: {doc['metadatas']['page']}")
-            
-            # Criteria analysis
-            st.subheader("Critérios de Análise")
-            for avaliacao in doc["analise"]["criterios"]:
-                with st.expander(f"""**{avaliacao['nome_criterio']}**  
-                                    **Nota**: {avaliacao['nota']}"""):
-                    st.write(f"**Justificativa**: {avaliacao['justificativa']}")
-                    st.write(f"**Recomendação**: {avaliacao['recomendacao']}")
-            
-            # Analysis history
-            with st.expander("**Histórico de Análise**"):
-                for obj in doc["history"]:
-                    with st.container(border=True,height=300):
-                        if isinstance(obj, HumanMessage):
-                            st.markdown("#### Entrada da Análise")
-                            st.write(obj.content)
-                        elif isinstance(obj, AIMessage):
-                            st.markdown("#### Resposta do Agente")
-                            st.write(obj.content)
-                            if obj.additional_kwargs:
-                                st.write("**Pesquisas Adicionais**")
-                                st.write(obj.additional_kwargs)
-                        elif isinstance(obj, ToolMessage):
-                            st.markdown("#### Resultado de Pesquisa")
-                            st.write(obj.content)
+1. **Normas Universais (GRI 1 a 3)**:  
+   - **GRI 1: Fundamentos 2021**: Define os conceitos básicos e requisitos para a elaboração de relatórios.  
+   - **GRI 2: Informações Gerais**: Solicita dados sobre a organização, governança e cadeia de valor.  
+   - **GRI 3: Materialidade**: Auxilia a organização a identificar os tópicos materiais mais relevantes.  
 
-# Error handling
-if st.session_state.analise_status == "Error":
-    st.error(f"Erro durante a análise: {st.session_state.get('analise_error', 'Erro desconhecido')}")
+2. **Normas Temáticas**:  
+   - Divididas em três áreas:  
+     - **Econômica** (ex.: GRI 201, GRI 202): Indicadores financeiros, práticas anticorrupção, etc.  
+     - **Ambiental** (ex.: GRI 301, GRI 302): Consumo de energia, emissões, resíduos, etc.  
+     - **Social** (ex.: GRI 401, GRI 402): Direitos humanos, diversidade, saúde ocupacional, etc.  
 
+3. **Relatórios Essenciais ou Abrangentes**:  
+   - **Essencial**: Inclui informações básicas sobre tópicos materiais e impactos.  
+   - **Abrangente**: Relata com profundidade sobre os impactos e o gerenciamento de cada tema.  
+
+### **Processo de Elaboração de Relatórios**  
+A elaboração de relatórios GRI segue um ciclo estruturado:  
+
+1. **Identificação de Stakeholders**: Identificar os grupos que serão impactados ou interessados nas atividades da organização.  
+2. **Análise de Materialidade**: Priorizar os tópicos mais relevantes para a empresa e seus stakeholders.  
+3. **Coleta e Apresentação de Dados**: Reunir informações quantitativas e qualitativas para relatar impactos, metas e estratégias.  
+4. **Validação e Auditoria**: Garantir que os dados sejam confiáveis e auditáveis.  
+
+### **Benefícios do GRI**  
+1. **Credibilidade**: Empresas que utilizam o padrão GRI demonstram compromisso com a transparência.  
+2. **Comparabilidade**: Relatórios no padrão GRI permitem análises consistentes entre empresas e setores.  
+3. **Engajamento dos Stakeholders**: Fornece uma visão clara dos impactos e das respostas da empresa às expectativas sociais e ambientais.  
+4. **Tome de decisão sustentável**: As informações fornecidas ajudam empresas e investidores a tomarem decisões informadas.  
+
+### **Relevância Global**  
+O GRI é amplamente adotado por empresas de todos os tamanhos e setores em mais de 90 países. Ele é compatível com outras estruturas de relatórios, como os **ODS da ONU (Objetivos de Desenvolvimento Sustentável)** e os padrões **SASB**.  
+
+Em resumo, a metodologia GRI é um marco na governança corporativa e na responsabilidade socioambiental, sendo essencial para organizações que buscam relatar seus impactos de forma ética, transparente e confiável.
+"""
+
+st.write(texto)
