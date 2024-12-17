@@ -1,5 +1,5 @@
 from langchain_core.prompts import ChatPromptTemplate
-from src.scripts.analysis.criteria import criterios
+from src.scripts.analysis.criteria import criterios, criterios2
 
 # Build prompt
 template = f"""
@@ -54,10 +54,10 @@ prompt_agent = ChatPromptTemplate.from_messages([
 
 prompt_structure = ChatPromptTemplate.from_messages(
     [
-        ("system", f"""You are a world-class algorithm for extracting information in structured formats. 
+        ("system", f"""You are responsable for extracting information in structured formats. 
          You extract the information from the following criteria and structure it in the output format:
          <criteria>
-         {criterios}
+         {criterios2}
          </criteria> 
          """),
         ("placeholder", "{messages}")
