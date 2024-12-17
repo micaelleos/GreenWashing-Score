@@ -9,6 +9,7 @@ pages = {
     ],
     "Recursos": [
          st.Page("./page/about_page.py", title="Sobre"),
+         st.Page("./page/gri_page.py", title="Padrão GRI"),
      ]
 }
 
