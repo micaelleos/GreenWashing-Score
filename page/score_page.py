@@ -4,6 +4,10 @@ from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 import threading
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 
+@st.dialog("Mostrar Trecho do Relatório")
+def mostrar(item):
+    st.write(item)
+
 # Function to run in a separate thread
 def long_running_task(initial_page, final_page):
     try:
@@ -63,8 +67,8 @@ if st.session_state.analise_status == "Completed":
     # Display results
     for doc in st.session_state.analise:
         with st.container(border=True):
-            # Expandable section for document details
-            st.write(f"**Documento ID**: {doc['ids']}")            
+            if st.button(f"Ver trecho {doc['ids']}"):
+                mostrar(doc['documents'])          
             # Metadata display
             colsx = st.columns([0.5, 0.5])
             with colsx[0]:
