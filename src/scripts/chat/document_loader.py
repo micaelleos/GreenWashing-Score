@@ -7,11 +7,12 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
-import chromadb
+from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_core.tools import tool
 import shutil
 import chromadb 
 import uuid
+import streamlit as st
 from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain.storage import InMemoryByteStore
 from langchain_core.documents import Document
@@ -143,14 +144,15 @@ def load_doc_family_pipeline():
     doc_splits, sub_docs = doc_spliters_family(UPLOAD_DIR)
     load_doc_family_to_db(doc_splits, sub_docs)
 
-
+@st.cache_resource()
 def vector_store():
     embeddings = OpenAIEmbeddings(model="text-embedding-3-large", api_key=OPENAI_API_KEY)
-    persistent_client = chromadb.PersistentClient(path=PERSIST_DIR)
-    vectorstore = Chroma(client=persistent_client,
-                                    collection_name="rag-chroma",
-                                    embedding_function=embeddings,
-                                    )
+    #persistent_client = chromadb.PersistentClient(path=PERSIST_DIR)
+    # vectorstore = Chroma(client=persistent_client,
+    #                                 collection_name="rag-chroma",
+    #                                 embedding_function=embeddings,
+    #                                 )
+    vectorstore = InMemoryVectorStore(embeddings)
     return vectorstore
 
 
