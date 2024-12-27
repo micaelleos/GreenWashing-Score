@@ -88,8 +88,10 @@ def doc_spliters_family(diretorio):
     child_text_splitter = RecursiveCharacterTextSplitter(chunk_size=400)
 
     sub_docs = []
+    doc_ids= []
     for doc in doc_splits:
         id = str(uuid.uuid4())
+        doc_ids.append(id)
         doc.metadata[id_key] = id
         doc.metadata["type"] = "parent"
         _sub_docs = child_text_splitter.split_documents([doc])
@@ -102,7 +104,7 @@ def doc_spliters_family(diretorio):
     for arquivo in arquivos:
         shutil.move(UPLOAD_DIR+arquivo, PROCESSED_DOC)
 
-    return doc_splits, sub_docs
+    return doc_ids, doc_splits, sub_docs
 
 
 def family_db_retriever():
@@ -135,14 +137,14 @@ def load_doc_pipeline():
     doc_splits = doc_spliters(UPLOAD_DIR)
     load_doc_to_db(doc_splits)
 
-def load_doc_family_to_db(doc_splits, sub_docs):
+def load_doc_family_to_db(doc_ids, doc_splits, sub_docs):
     db = vector_store()
-    db.add_documents(doc_splits)
-    db.add_documents(sub_docs)
+    db.add_documents(documents=doc_splits, ids=doc_ids)
+    db.add_documents(documents=sub_docs)
 
 def load_doc_family_pipeline():
-    doc_splits, sub_docs = doc_spliters_family(UPLOAD_DIR)
-    load_doc_family_to_db(doc_splits, sub_docs)
+    doc_ids, doc_splits, sub_docs = doc_spliters_family(UPLOAD_DIR)
+    load_doc_family_to_db(doc_ids, doc_splits, sub_docs)
 
 @st.cache_resource()
 def vector_store():
@@ -179,11 +181,14 @@ def custom_retriver(query: str):
             doc_id.append(doc.metadata['doc_id'])
 
     docs = []
-    for id in doc_id:
-        docs.append(retriever.vectorstore.get(where={"$and": [{"doc_id": {"$eq":f"{id}" }},{"type": {"$eq": 'parent'}}]}))
+    #for id in doc_id:
+        #docs.append(retriever.vectorstore.get(where={"$and": [{"doc_id": {"$eq":f"{id}" }},{"type": {"$eq": 'parent'}}]}))
     
-    formated_docs = format_doc(docs)
+    docs = retriever.vectorstore.get_by_ids(doc_id)
 
+    #formated_docs = format_doc(docs)
+    formated_docs = docs
+    
     serialized = "\n\n".join(
         (f"Termo de pesquisa: {query} Source: {doc.metadata}\n" f"Content: {doc.page_content}")
         for doc in formated_docs
