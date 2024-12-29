@@ -56,7 +56,7 @@ if st.button("Iniciar Análise"):
     start_analysis(initial_page, final_page)
 
 # Progress and results display
-if st.session_state.analise_status == "Running":
+while st.session_state.analise_status == "Running":
     with st.spinner("Analise em adamento. Por favor, aguarde..."):
         time.sleep(7)  # Aguarda um segundo antes de recarregar
 
