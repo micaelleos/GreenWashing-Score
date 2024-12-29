@@ -3,6 +3,7 @@ from src.scripts.analysis.analiser import GreenAgent
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 import threading
 from streamlit.runtime.scriptrunner import add_script_run_ctx
+import time
 
 @st.dialog("Mostrar Trecho do Relatório")
 def mostrar(item):
@@ -10,16 +11,15 @@ def mostrar(item):
 
 # Function to run in a separate thread
 def long_running_task(initial_page, final_page):
-    try:
-        bot = GreenAgent()
-        result = bot.analizer_page(int(initial_page), int(final_page))
-        
-        # Use a thread-safe way to update session state
-        st.session_state['analise'] = result
-        st.session_state['analise_status'] = "Completed"
-    except Exception as e:
-        st.session_state['analise_status'] = "Error"
-        st.session_state['analise_error'] = str(e)
+    # try:
+    bot = GreenAgent()
+    result = bot.analizer_page(int(initial_page), int(final_page))
+    # Use a thread-safe way to update session state
+    st.session_state['analise'] = result
+    st.session_state['analise_status'] = "Completed"
+    # except Exception as e:
+    #     st.session_state['analise_status'] = "Error"
+    #     st.session_state['analise_error'] = str(e)
 
 def start_analysis(initial_page, final_page):
     # Reset status and create a new thread
@@ -57,8 +57,8 @@ if st.button("Iniciar Análise"):
 
 # Progress and results display
 if st.session_state.analise_status == "Running":
-    st.spinner("Análise em andamento...")
-    st.write("Processando análise. Você pode navegar em outras páginas enquanto isso.")
+    with st.spinner("Analise em adamento. Por favor, aguarde..."):
+        time.sleep(7)  # Aguarda um segundo antes de recarregar
 
 # Check for completed analysis
 if st.session_state.analise_status == "Completed":
@@ -67,14 +67,14 @@ if st.session_state.analise_status == "Completed":
     # Display results
     for doc in st.session_state.analise:
         with st.container(border=True):
-            if st.button(f"Ver trecho {doc['ids']}"):
-                mostrar(doc['documents'])          
+            if st.button(f"Ver trecho {doc['id']}"):
+                mostrar(doc['documents'])        
             # Metadata display
-            colsx = st.columns([0.5, 0.5])
+            colsx = st.columns([0.8, 0.2])
             with colsx[0]:
-                st.markdown(f"**Documento**: {doc['metadatas']['source']}")
+                st.markdown(f"**Documento**: {doc['metadata']['source']}")
             with colsx[1]:
-                st.markdown(f"**Página**: {doc['metadatas']['page']}")
+                st.markdown(f"**Página**: {doc['metadata']['page']}")
             
             # Criteria analysis
             st.subheader("Critérios de Análise")

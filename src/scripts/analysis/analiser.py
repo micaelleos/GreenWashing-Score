@@ -39,7 +39,6 @@ class GreenAgent():
 
         self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2,top_p=0.3,openai_api_key=OPENAI_API_KEY) #ChatAnthropic(model='claude-3-opus-20240229',api_key=CLAUDE_API) 
         self.tools = tools
-        print(self.tools)
         self.model_with_tools = self.llm.bind_tools(self.tools)
         self.model_with_structured_output = self.llm.with_structured_output(Criterios)
         self.memory = MemorySaver()
@@ -102,13 +101,18 @@ class GreenAgent():
     def analizer_page(self,initial_page:int,final_page:int):
         docs = retrieve_sections_page(initial_page,final_page)
         docs_analized = []
-        for doc_analized in docs:
+        docx={}
+        for doc in docs:
             config = {"configurable": {"thread_id": uuid.uuid4()}}
-            inputs={"messages":HumanMessage(doc_analized['documents'])}
+            inputs={"messages":HumanMessage(doc.page_content)}
             answer = self.graph.invoke(input=inputs,config=config)
-            doc_analized["analise"] = answer['final_response']
-            doc_analized["history"] = answer['messages']
-            docs_analized.append(doc_analized)
+            docx['documents']=doc.page_content
+            docx['id'] = doc.id
+            docx['metadata'] = doc.metadata
+            docx["analise"] = answer['final_response']
+            docx["history"] = answer['messages']
+            docs_analized.append(docx)
+            docx={}
         print("finalizou")
         return docs_analized
     

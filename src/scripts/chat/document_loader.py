@@ -35,13 +35,17 @@ def retrieve_sections():
 
 def retrieve_sections_page(initial_page:int,final_page:int):
     db = vector_store()
-    retriever = db.as_retriever()
-    result = retriever.vectorstore.get(where={"type": {"$eq": 'parent'}})
-    docs=[]
-    for i,id in enumerate(result['ids']):
-        if int(result['metadatas'][i]['page']) <= final_page and int(result['metadatas'][i]['page']) >= initial_page:
-            if len(result['documents'][i]) > 500:
-                docs.append({'ids':id,'documents':result['documents'][i],"metadatas":result['metadatas'][i]})
+    filtered_ids = [
+    value['id']
+    for key, value in db.store.items()
+    if (
+        'metadata' in value and
+        'page' in value['metadata'] and
+        initial_page <= value['metadata']['page'] <= final_page and
+        value['metadata'].get('type') == 'parent'
+    )
+    ]
+    docs = db.get_by_ids(filtered_ids)
     return docs
 
 def save_uploadedfile(uploadedfile):
@@ -173,7 +177,7 @@ def custom_retriver(query: str):
     """Retrieve information related to a query."""
     db = vector_store()
     retriever = db.as_retriever()
-    child_docs = retriever.vectorstore.max_marginal_relevance_search(query, k=14,fetch_k=5,filter={'type':'child'})
+    child_docs = retriever.vectorstore.max_marginal_relevance_search(query, k=14,fetch_k=5)
 
     doc_id = []
     for doc in child_docs:
@@ -188,7 +192,7 @@ def custom_retriver(query: str):
 
     #formated_docs = format_doc(docs)
     formated_docs = docs
-    
+
     serialized = "\n\n".join(
         (f"Termo de pesquisa: {query} Source: {doc.metadata}\n" f"Content: {doc.page_content}")
         for doc in formated_docs
