@@ -5,15 +5,30 @@ import plotly.graph_objects as go
 from src.scripts.status_application import atualizar_status
 
 status = atualizar_status()
-if status.status["analise"]:
-    st.write(status.status["analise"])
-    # Dados de exemplo
-    dados = {
-        "Documento 1": {"Critério 1": 4, "Critério 2": 5, "Critério 3": 3},
-        "Documento 2": {"Critério 1": 2, "Critério 2": 4, "Critério 3": 5},
-        "Documento 3": {"Critério 1": 3, "Critério 2": 3, "Critério 3": 2},
-    }
 
+def extrair_notas_por_id(data):
+    """
+    Extrai as notas de critérios de uma estrutura de dados usando os IDs como chaves principais
+    e os nomes dos critérios como chaves para as notas.
+    
+    Args:
+        data (dict): Estrutura de dados contendo os resultados de análise.
+    
+    Returns:
+        dict: Dicionário com IDs dos documentos e notas associadas aos nomes dos critérios.
+    """
+    dados = {
+        item["id"]: {
+            criterio["nome_criterio"]: criterio["nota"]
+            for criterio in item["data"]["analise"]["criterios"]
+        }
+        for item in data["resultado_analise"]
+    }
+    return dados
+
+if status.status["analise"]:
+    analise = status.status["analise"]
+    dados = extrair_notas_por_id(analise)
     # Transformar os dados em DataFrame
     df = pd.DataFrame(dados).T  # Transpor para que documentos fiquem como linhas
 
