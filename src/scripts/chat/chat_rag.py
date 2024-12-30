@@ -32,7 +32,7 @@ class Bot():
             stream_mode="values",
             config=self.config,
         ):
-            event["messages"][-1].pretty_print()
+            #event["messages"][-1].pretty_print()
             if isinstance(event["messages"][-1], AIMessage):
                 menssage = event["messages"][-1]
         return menssage.content
