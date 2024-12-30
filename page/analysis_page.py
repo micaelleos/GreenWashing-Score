@@ -54,9 +54,13 @@ with cols[0]:
 with cols[1]:
     final_page = st.text_input('Página final')
 
+status = atualizar_status()
 # Submit button
 if st.button("Iniciar Análise"):
-    start_analysis(initial_page, final_page)
+    if status.status["documento"]:
+        start_analysis(initial_page, final_page)
+    else:
+        st.info("Não há documentos carregados na base.")
 
 # Progress and results display
 while st.session_state.analise_status == "Running":
