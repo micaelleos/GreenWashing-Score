@@ -1,12 +1,15 @@
 import streamlit as st
 from src.scripts.analysis.analiser import GreenAgent
+from src.scripts.status_application import atualizar_status
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 import threading
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 import time
 
-@st.dialog("Mostrar Trecho do Relatório")
-def mostrar(item):
+@st.dialog("Trecho do Relatório")
+def mostrar(item,id,pg):
+    st.write(f"**ID do trecho: {id}**")
+    st.write(f"**Página: {pg}**")
     st.write(item)
 
 # Function to run in a separate thread
@@ -63,12 +66,21 @@ while st.session_state.analise_status == "Running":
 # Check for completed analysis
 if st.session_state.analise_status == "Completed":
     st.success("Análise concluída!")
-    
+    result_list =[]
+    for doc in st.session_state.analise:
+        result = {}
+        result['analise'] = doc['analise']
+        result['documents'] = doc['documents']
+        result['metadata'] = doc['metadata']
+        result_list.append({"id":doc["id"], "data": result})
+    atualizar_status(analise=result_list)
     # Display results
+    i=0
     for doc in st.session_state.analise:
         with st.container(border=True):
-            if st.button(f"Ver trecho {doc['id']}"):
-                mostrar(doc['documents'])        
+            i=i+1
+            if st.button(f"Ver trecho {i}"):
+                mostrar(doc['documents'],doc['id'],doc["metadata"]["page"])        
             # Metadata display
             colsx = st.columns([0.8, 0.2])
             with colsx[0]:

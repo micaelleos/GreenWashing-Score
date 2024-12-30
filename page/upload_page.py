@@ -2,8 +2,10 @@ import streamlit as st
 import os
 import threading
 from src.scripts.chat.document_loader import *
+from src.scripts.status_application import atualizar_status
 from streamlit.runtime.scriptrunner import add_script_run_ctx
 import time
+
 
 # Function to run document loading in a background thread
 def background_doc_loading(filename=None):
@@ -12,6 +14,7 @@ def background_doc_loading(filename=None):
         st.session_state['document_load_status'] = "Completed"
         # Add the document name to session state
         st.session_state.documents=filename
+        
     except Exception as e:
         st.session_state['document_load_status'] = "Error"
         st.session_state['document_load_error'] = str(e)
@@ -61,6 +64,7 @@ if st.session_state.document_load_status == "Error":
 
 # Display loaded documents
 if st.session_state.documents:
+    atualizar_status(documento=st.session_state.documents)
     st.subheader("Lista de documentos na base de dados:")
     st.info(f"Documento {st.session_state.documents} na base de dados")
 

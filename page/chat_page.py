@@ -3,21 +3,21 @@ import streamlit as st
 import time
 from src.scripts.chat.chat_rag import Bot
 
-st.html(
-    '''
-        <style>
-            div[aria-label="dialog"]>button[aria-label="Close"] {
-                display: none;
-            }
-            .st-emotion-cache-ocqkz7{
-                position: sticky;
-                top: 3.75rem; 
-                // width: 50%; 
-                z-index:999991; 
-                background-color: white;}
-        </style>
-    '''
-)
+# st.html(
+#     '''
+#         <style>
+#             div[aria-label="dialog"]>button[aria-label="Close"] {
+#                 display: none;
+#             }
+#             .st-emotion-cache-ocqkz7{
+#                 position: sticky;
+#                 top: 3.75rem; 
+#                 // width: 50%; 
+#                 z-index:999991; 
+#                 background-color: white;}
+#         </style>
+#     '''
+# )
 
 
 # Streamed response emulator
