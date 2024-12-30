@@ -4,7 +4,8 @@ pages = {
     "Menu": [
         st.Page("./page/chat_page.py", title="Chat com assistente"),
         st.Page("./page/upload_page.py", title="Upload"),
-        st.Page("./page/score_page.py", title="Análise"),
+        st.Page("./page/analysis_page.py", title="Análise"),
+        st.Page("./page/score_page.py", title="Dashboard"),
     ],
     "Recursos": [
          st.Page("./page/about_page.py", title="Sobre"),

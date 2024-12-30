@@ -5,7 +5,7 @@ from langgraph.prebuilt import create_react_agent
 from langchain_openai import ChatOpenAI
 from src.scripts.chat.tools import tools_esg_agent
 from langchain_core.messages import AIMessage
-from src.scripts.chat.prompt import prompt
+from src.scripts.chat.prompt import prompt, saudacao
 
 @st.cache_resource()
 def memory():
@@ -22,6 +22,8 @@ class Bot():
         self.agent_executor = create_react_agent(self.llm, self.tools, checkpointer=self.memory, state_modifier=prompt)
 
         self.config = {"configurable": {"thread_id": "def234"}}
+
+        self.agent_executor.invoke(input={"messages":[{"role":"assistant","content":saudacao}]},config=self.config)
 
     def chat(self,query:str):
         menssage = None

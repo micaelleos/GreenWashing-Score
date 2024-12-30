@@ -1,119 +1,59 @@
 import streamlit as st
-from src.scripts.analysis.analiser import GreenAgent
-from src.scripts.status_application import atualizar_status
-from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
-import threading
-from streamlit.runtime.scriptrunner import add_script_run_ctx
-import time
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 
-@st.dialog("Trecho do Relatório")
-def mostrar(item,id,pg):
-    st.write(f"**ID do trecho: {id}**")
-    st.write(f"**Página: {pg}**")
-    st.write(item)
+# Dados de exemplo
+dados = {
+    "Documento 1": {"Critério 1": 4, "Critério 2": 5, "Critério 3": 3},
+    "Documento 2": {"Critério 1": 2, "Critério 2": 4, "Critério 3": 5},
+    "Documento 3": {"Critério 1": 3, "Critério 2": 3, "Critério 3": 2},
+}
 
-# Function to run in a separate thread
-def long_running_task(initial_page, final_page):
-    # try:
-    bot = GreenAgent()
-    result = bot.analizer_page(int(initial_page), int(final_page))
-    # Use a thread-safe way to update session state
-    st.session_state['analise'] = result
-    st.session_state['analise_status'] = "Completed"
-    # except Exception as e:
-    #     st.session_state['analise_status'] = "Error"
-    #     st.session_state['analise_error'] = str(e)
+# Transformar os dados em DataFrame
+df = pd.DataFrame(dados).T  # Transpor para que documentos fiquem como linhas
 
-def start_analysis(initial_page, final_page):
-    # Reset status and create a new thread
-    st.session_state.analise_status = "Running"
-    st.session_state.analise = []
-    
-    # Create and start the thread with Streamlit context
-    thread = threading.Thread(target=long_running_task, args=(initial_page, final_page))
-    
-    # This is the key addition to fix the threading context issue
-    add_script_run_ctx(thread)
-    thread.start()
+# Calcular a média para cada critério
+media_criterios = df.mean(axis=0)
 
+# Exibir a média por critério
+st.subheader("Média das Notas por Critério")
 
-st.title('Análise do Documento')
-st.write("Escolha as páginas do relatório para serem feitas as análises:")
+# Gráfico de barras estilizado com degradê verde
+fig = go.Figure()
 
-# Initialize session state variables if they don't exist
-if 'analise_status' not in st.session_state:
-    st.session_state.analise_status = None
+# Adicionar as barras
+fig.add_trace(go.Bar(
+    x=media_criterios.index,
+    y=media_criterios.values,
+    text=media_criterios.values,
+    textposition='auto',
+    marker=dict(
+        color=media_criterios.values,
+        colorscale='Greens',  # Degradê em tons de verde
+    ),
+    name="Média por Critério"
+))
 
-if 'analise' not in st.session_state:
-    st.session_state.analise = []
+# Adicionar linha de referência (Nota 4)
+fig.add_hline(
+    y=4,
+    line_dash="dash",
+    line_color="darkgreen",
+    annotation_text="Bom (Nota 4)",
+    annotation_position="top right",
+)
 
-# Input columns for page range
-cols = st.columns([0.5, 0.5])
-with cols[0]:
-    initial_page = st.text_input('Página inicial')
-with cols[1]:
-    final_page = st.text_input('Página final')
+# Configurações do layout
+fig.update_layout(
+    title="Média das Notas por Critério",
+    xaxis_title="Critério",
+    yaxis_title="Média das Notas",
+    template="simple_white",
+    title_x=0.5,
+    font=dict(size=14),
+    margin=dict(l=40, r=40, t=50, b=40),
+)
 
-# Submit button
-if st.button("Iniciar Análise"):
-    start_analysis(initial_page, final_page)
-
-# Progress and results display
-while st.session_state.analise_status == "Running":
-    with st.spinner("Analise em adamento. Por favor, aguarde..."):
-        time.sleep(7)  # Aguarda um segundo antes de recarregar
-
-# Check for completed analysis
-if st.session_state.analise_status == "Completed":
-    st.success("Análise concluída!")
-    result_list =[]
-    for doc in st.session_state.analise:
-        result = {}
-        result['analise'] = doc['analise']
-        result['documents'] = doc['documents']
-        result['metadata'] = doc['metadata']
-        result_list.append({"id":doc["id"], "data": result})
-    atualizar_status(analise=result_list)
-    # Display results
-    i=0
-    for doc in st.session_state.analise:
-        with st.container(border=True):
-            i=i+1
-            if st.button(f"Ver trecho {i}"):
-                mostrar(doc['documents'],doc['id'],doc["metadata"]["page"])        
-            # Metadata display
-            colsx = st.columns([0.8, 0.2])
-            with colsx[0]:
-                st.markdown(f"**Documento**: {doc['metadata']['source']}")
-            with colsx[1]:
-                st.markdown(f"**Página**: {doc['metadata']['page']}")
-            
-            # Criteria analysis
-            st.subheader("Critérios de Análise")
-            for avaliacao in doc["analise"]["criterios"]:
-                with st.expander(f"""**{avaliacao['nome_criterio']}**  
-                                    **Nota**: {avaliacao['nota']}"""):
-                    st.write(f"**Justificativa**: {avaliacao['justificativa']}")
-                    st.write(f"**Recomendação**: {avaliacao['recomendacao']}")
-            
-            # Analysis history
-            with st.expander("**Histórico de Análise**"):
-                for obj in doc["history"]:
-                    with st.container(border=True,height=300):
-                        if isinstance(obj, HumanMessage):
-                            st.markdown("#### Entrada da Análise")
-                            st.write(obj.content)
-                        elif isinstance(obj, AIMessage):
-                            st.markdown("#### Resposta do Agente")
-                            st.write(obj.content)
-                            if obj.additional_kwargs:
-                                st.write("**Pesquisas Adicionais**")
-                                st.write(obj.additional_kwargs)
-                        elif isinstance(obj, ToolMessage):
-                            st.markdown("#### Resultado de Pesquisa")
-                            st.write(obj.content)
-
-# Error handling
-if st.session_state.analise_status == "Error":
-    st.error(f"Erro durante a análise: {st.session_state.get('analise_error', 'Erro desconhecido')}")
-
+# Exibir o gráfico no Streamlit
+st.plotly_chart(fig)

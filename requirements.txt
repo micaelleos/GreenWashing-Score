@@ -10,3 +10,4 @@ langchain-chroma
 langgraph
 streamlit
 pysqlite3-binary
+plotly

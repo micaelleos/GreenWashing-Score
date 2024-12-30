@@ -23,5 +23,4 @@ def atualizar_status(analise=None,documento=None):
         stats.atualizar(analise=analise)
     if documento:
         stats.atualizar(documento=documento)
-    print(stats)
     return stats

@@ -36,13 +36,8 @@ if "issues" not in st.session_state:
 bot = Bot()
 
 with st.container():
-    col1, col2 = st.columns([0.8,0.2])
-    with col1:
-        #st.title("Assistente ESG")
-        st.markdown("## Assistente ESG")
-    with col2:
-        if st.button(":gear:",use_container_width=True):
-            pass
+    st.markdown("## Assistente ESG")
+    
 
 
 @st.fragment
@@ -57,12 +52,8 @@ def atualizar_chat(chat_container,prompt=None):
         for i in range(0,len(messages)):
             message = messages[i]       
                                 
-            if message['role'] == "assistant":
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-            else:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])    
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])    
 
         if prompt:
             with st.chat_message("assistant"):
