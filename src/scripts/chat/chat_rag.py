@@ -3,7 +3,7 @@ import streamlit as st
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
 from langchain_openai import ChatOpenAI
-from src.scripts.chat.document_loader import tools
+from src.scripts.chat.tools import tools_esg_agent
 from langchain_core.messages import AIMessage
 from src.scripts.chat.prompt import prompt
 
@@ -18,7 +18,7 @@ class Bot():
 
         self.llm = ChatOpenAI(model="gpt-4o",api_key=self.OPENAI_API_KEY)
         self.memory = memory()
-        self.tools = tools
+        self.tools = tools_esg_agent
         self.agent_executor = create_react_agent(self.llm, self.tools, checkpointer=self.memory, state_modifier=prompt)
 
         self.config = {"configurable": {"thread_id": "def234"}}

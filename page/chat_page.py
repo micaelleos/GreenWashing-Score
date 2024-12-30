@@ -72,7 +72,6 @@ def atualizar_chat(chat_container,prompt=None):
 
             st.session_state.messages.append({"role": "assistant", "content": response})
 
-
 chat_container = st.container(height=400,border=False)
 atualizar_chat(chat_container)
 
