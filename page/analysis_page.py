@@ -14,15 +14,15 @@ def mostrar(item,id,pg):
 
 # Function to run in a separate thread
 def long_running_task(initial_page, final_page):
-    # try:
-    bot = GreenAgent()
-    result = bot.analizer_page(int(initial_page), int(final_page))
-    # Use a thread-safe way to update session state
-    st.session_state['analise'] = result
-    st.session_state['analise_status'] = "Completed"
-    # except Exception as e:
-    #     st.session_state['analise_status'] = "Error"
-    #     st.session_state['analise_error'] = str(e)
+    try:
+        bot = GreenAgent()
+        result = bot.analizer_page(int(initial_page), int(final_page))
+        # Use a thread-safe way to update session state
+        st.session_state['analise'] = result
+        st.session_state['analise_status'] = "Completed"
+    except Exception as e:
+         st.session_state['analise_status'] = "Error"
+         st.session_state['analise_error'] = str(e)
 
 def start_analysis(initial_page, final_page):
     # Reset status and create a new thread

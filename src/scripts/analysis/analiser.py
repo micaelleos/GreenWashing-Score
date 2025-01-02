@@ -100,6 +100,7 @@ class GreenAgent():
         
     def analizer_page(self,initial_page:int,final_page:int):
         docs = retrieve_sections_page(initial_page,final_page)
+        print(docs)
         docs_analized = []
         docx={}
         for doc in docs:
