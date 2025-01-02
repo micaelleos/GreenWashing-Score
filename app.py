@@ -1,8 +1,8 @@
 import streamlit as st
 
-# if "init" not in st.session_state:
-#     st.session_state.init = "cache_cleared"
-#     st.cache_resource.clear()
+if "init" not in st.session_state:
+    st.session_state.init = "cache_cleared"
+    st.cache_resource.clear()
 
 pages = {
     "Menu": [
