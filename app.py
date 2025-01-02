@@ -1,5 +1,9 @@
 import streamlit as st
 
+if "init" not in st.session_state:
+    st.session_state.init = "cache_cleared"
+    st.cache_resource.clear()
+
 pages = {
     "Menu": [
         st.Page("./page/chat_page.py", title="Chat com assistente"),
