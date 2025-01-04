@@ -17,7 +17,7 @@ def long_running_task(initial_page, final_page):
     #try:
     bot = GreenAgent()
     result = bot.analizer_page(int(initial_page), int(final_page))
-    print(bot.cost)
+    st.session_state.usage_cost = bot.cost
     # Use a thread-safe way to update session state
     st.session_state['analise'] = result
     st.session_state['analise_status'] = "Completed"
@@ -45,6 +45,9 @@ st.write("Escolha as páginas do relatório para serem feitas as análises:")
 if 'analise_status' not in st.session_state:
     st.session_state.analise_status = None
 
+if 'usage_cost' not in st.session_state:
+    st.session_state.usage_cost = None
+
 if 'analise' not in st.session_state:
     st.session_state.analise = []
 
@@ -71,6 +74,7 @@ while st.session_state.analise_status == "Running":
 # Check for completed analysis
 if st.session_state.analise_status == "Completed":
     st.success("Análise concluída!")
+    st.write(f"Custo da análise:",st.session_state.usage_cost)
     result_list =[]
     for doc in st.session_state.analise:
         result = {}
