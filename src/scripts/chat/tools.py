@@ -13,7 +13,6 @@ def status_da_aplicacao():
     """
     #try:
     status = atualizar_status()
-    print(status.status)
     return status.status
     #except:
     #    return "Erro ao recuperar o status da aplicação"

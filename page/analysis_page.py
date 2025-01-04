@@ -17,6 +17,7 @@ def long_running_task(initial_page, final_page):
     #try:
     bot = GreenAgent()
     result = bot.analizer_page(int(initial_page), int(final_page))
+    print(bot.cost)
     # Use a thread-safe way to update session state
     st.session_state['analise'] = result
     st.session_state['analise_status'] = "Completed"

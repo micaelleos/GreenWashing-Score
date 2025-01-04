@@ -63,7 +63,7 @@ def doc_spliters(diretorio):
         docs.extend(loader.load())
 
     text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(
-        chunk_size=2000, chunk_overlap=300
+        chunk_size=1000, chunk_overlap=300
     )
 
     doc_splits = text_splitter.split_documents(docs)
@@ -208,8 +208,6 @@ def retrieve(query: str):
         (f"Source: {doc.metadata}\n" f"Content: {doc.page_content}")
         for doc in retrieved_docs
     )
-    print(len(serialized), len(retrieved_docs))
-    print(serialized, retrieved_docs)
     return serialized, retrieved_docs
 
 @tool(response_format="content_and_artifact")

@@ -14,7 +14,8 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
-from langchain_community.callbacks.openai_info import OpenAICallbackHandler
+from langchain_community.callbacks import get_openai_callback
+
 
 
 
@@ -40,7 +41,7 @@ class AgentState(MessagesState):
 class GreenAgent():
 
     def __init__(self):
-        self.callback_handler = OpenAICallbackHandler()
+        self.cost = []
         self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2,top_p=0.3,openai_api_key=OPENAI_API_KEY) #ChatAnthropic(model='claude-3-opus-20240229',api_key=CLAUDE_API) 
         self.tools = tools
         self.model_with_tools = self.llm.bind_tools(self.tools)
@@ -71,7 +72,7 @@ class GreenAgent():
 
         self.workflow.add_edge("tools", "agent")
         self.workflow.add_edge("respond", END)
-        self.graph = self.workflow.compile(checkpointer=self.memory)
+        self.graph = self.workflow.compile(checkpointer=self.memory,debug=True)
 
     def call_model(self,state: AgentState):
         chain = prompt_agent | self.model_with_tools
@@ -109,16 +110,18 @@ class GreenAgent():
         for doc in docs:
             config = {"configurable": {"thread_id": uuid.uuid4()}}
             inputs={"messages":HumanMessage(doc.page_content)}
-            answer = self.graph.invoke(input=inputs,config=config)
-            docx['documents']=doc.page_content
-            docx['id'] = doc.id
-            docx['metadata'] = doc.metadata
-            docx["analise"] = answer['final_response']
-            docx["history"] = answer['messages']
-            docs_analized.append(docx)
-            docx={}
+            with  get_openai_callback() as cb:
+                answer = self.graph.invoke(input=inputs,config=config)
+                docx['documents']=doc.page_content
+                docx['id'] = doc.id
+                docx['metadata'] = doc.metadata
+                docx["analise"] = answer['final_response']
+                docx["history"] = answer['messages']
+                docs_analized.append(docx)
+                docx={}
+            print(cb)
+            self.cost.append(cb)
         print("finalizou")
-        print(self.callback_handler)
         return docs_analized
     
     def analizer_full_document(self):
