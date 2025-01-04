@@ -14,6 +14,10 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import MemorySaver
+from langchain_community.callbacks.openai_info import OpenAICallbackHandler
+
+
+
 PERSIST_DIR="../data"
 OPENAI_API_KEY = os.environ['OPEN_API_KEY']
 # Classe para representar um critério individual
@@ -36,7 +40,7 @@ class AgentState(MessagesState):
 class GreenAgent():
 
     def __init__(self):
-
+        self.callback_handler = OpenAICallbackHandler()
         self.llm = ChatOpenAI(model_name="gpt-4o", temperature=0.2,top_p=0.3,openai_api_key=OPENAI_API_KEY) #ChatAnthropic(model='claude-3-opus-20240229',api_key=CLAUDE_API) 
         self.tools = tools
         self.model_with_tools = self.llm.bind_tools(self.tools)
@@ -114,6 +118,7 @@ class GreenAgent():
             docs_analized.append(docx)
             docx={}
         print("finalizou")
+        print(self.callback_handler)
         return docs_analized
     
     def analizer_full_document(self):

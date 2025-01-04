@@ -64,7 +64,7 @@ if st.button("Iniciar Análise"):
 
 # Progress and results display
 while st.session_state.analise_status == "Running":
-    with st.spinner("Analise em adamento. Por favor, aguarde..."):
+    with st.spinner("Análise em adamento. Por favor, aguarde..."):
         time.sleep(7)  # Aguarda um segundo antes de recarregar
 
 # Check for completed analysis
@@ -78,7 +78,7 @@ if st.session_state.analise_status == "Completed":
         result['metadata'] = doc['metadata']
         result_list.append({"id":doc["id"], "data": result})
     atualizar_status(analise=result_list)
-    print(result_list)
+    
     # Display results
     i=0
     for doc in st.session_state.analise:
