@@ -119,7 +119,6 @@ class GreenAgent():
                 docx["history"] = answer['messages']
                 docs_analized.append(docx)
                 docx={}
-            print(cb)
             self.cost.append(cb)
         print("finalizou")
         return docs_analized

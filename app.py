@@ -1,8 +1,11 @@
 import streamlit as st
+from src.scripts.chat.document_loader import limpar_diretorio
 
 if "init" not in st.session_state:
     st.session_state.init = "cache_cleared"
     st.cache_resource.clear()
+    limpar_diretorio()
+
 
 pages = {
     "Menu": [

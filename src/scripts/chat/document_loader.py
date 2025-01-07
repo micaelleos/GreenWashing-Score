@@ -23,6 +23,26 @@ PERSIST_DIR="data/"
 
 OPENAI_API_KEY=os.getenv('OPEN_API_KEY')
 
+def limpar_diretorio():
+    """
+    Limpa um diretório, removendo todos os arquivos e subdiretórios.
+
+    :param caminho_diretorio: Caminho do diretório a ser limpo.
+    """
+    caminho_diretorios = [UPLOAD_DIR,PROCESSED_DOC]
+    # Itera sobre os arquivos e subdiretórios no diretório
+    for caminho_diretorio in caminho_diretorios:
+        for item in os.listdir(caminho_diretorio):
+            item_caminho = os.path.join(caminho_diretorio, item)
+            
+            # Remove arquivos
+            if os.path.isfile(item_caminho) or os.path.islink(item_caminho):
+                os.unlink(item_caminho)  # Remove o arquivo ou link simbólico
+            # Remove diretórios
+            elif os.path.isdir(item_caminho):
+                shutil.rmtree(item_caminho)  # Remove o diretório e seu conteúdo
+
+
 def retrieve_sections():
     db = vector_store()
     retriever = db.as_retriever()
