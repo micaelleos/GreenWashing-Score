@@ -74,7 +74,6 @@ while st.session_state.analise_status == "Running":
 # Check for completed analysis
 if st.session_state.analise_status == "Completed":
     st.success("Análise concluída!")
-    st.write(f"Custo da análise:",st.session_state.usage_cost)
     result_list =[]
     for doc in st.session_state.analise:
         result = {}
@@ -123,6 +122,7 @@ if st.session_state.analise_status == "Completed":
                             st.markdown("#### Resultado de Pesquisa")
                             st.write(obj.content)
 
+    st.write(f"Custo da análise:",st.session_state.usage_cost)
 # Error handling
 if st.session_state.analise_status == "Error":
     st.error(f"Erro durante a análise: {st.session_state.get('analise_error', 'Erro desconhecido')}")

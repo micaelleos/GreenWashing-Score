@@ -197,7 +197,7 @@ def custom_retriver(query: str):
     """Retrieve information related to a query."""
     db = vector_store()
     retriever = db.as_retriever()
-    child_docs = retriever.vectorstore.max_marginal_relevance_search(query, k=14,fetch_k=5)
+    child_docs = retriever.vectorstore.max_marginal_relevance_search(query, k=14,fetch_k=3)
 
     doc_id = []
     for doc in child_docs:
