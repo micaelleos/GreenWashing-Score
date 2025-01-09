@@ -17,8 +17,8 @@ from langchain.retrievers.multi_vector import MultiVectorRetriever
 from langchain.storage import InMemoryByteStore
 from langchain_core.documents import Document
 
-UPLOAD_DIR = "./data/stage/"
-PROCESSED_DOC = "./data/processed/"
+UPLOAD_DIR = "data/stage/"
+PROCESSED_DOC = "data/processed/"
 PERSIST_DIR="data/"
 
 OPENAI_API_KEY=os.getenv('OPEN_API_KEY')
