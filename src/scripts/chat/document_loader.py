@@ -32,15 +32,16 @@ def limpar_diretorio():
     caminho_diretorios = [UPLOAD_DIR,PROCESSED_DOC]
     # Itera sobre os arquivos e subdiretórios no diretório
     for caminho_diretorio in caminho_diretorios:
-        for item in os.listdir(caminho_diretorio):
-            item_caminho = os.path.join(caminho_diretorio, item)
-            
-            # Remove arquivos
-            if os.path.isfile(item_caminho) or os.path.islink(item_caminho):
-                os.unlink(item_caminho)  # Remove o arquivo ou link simbólico
-            # Remove diretórios
-            elif os.path.isdir(item_caminho):
-                shutil.rmtree(item_caminho)  # Remove o diretório e seu conteúdo
+        if os.path.exists(caminho_diretorio):
+            for item in os.listdir(caminho_diretorio):
+                item_caminho = os.path.join(caminho_diretorio, item)
+                
+                # Remove arquivos
+                if os.path.isfile(item_caminho) or os.path.islink(item_caminho):
+                    os.unlink(item_caminho)  # Remove o arquivo ou link simbólico
+                # Remove diretórios
+                elif os.path.isdir(item_caminho):
+                    shutil.rmtree(item_caminho)  # Remove o diretório e seu conteúdo
 
 
 def retrieve_sections():
