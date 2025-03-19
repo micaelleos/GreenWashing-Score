@@ -19,7 +19,7 @@ class Bot():
         self.llm = ChatOpenAI(model="gpt-4o",api_key=self.OPENAI_API_KEY)
         self.memory = memory()
         self.tools = tools_esg_agent
-        self.agent_executor = create_react_agent(self.llm, self.tools, checkpointer=self.memory, state_modifier=prompt)
+        self.agent_executor = create_react_agent(self.llm, self.tools, checkpointer=self.memory, prompt=prompt)
 
         self.config = {"configurable": {"thread_id": "def234"}}
 
