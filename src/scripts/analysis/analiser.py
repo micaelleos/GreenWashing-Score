@@ -1,5 +1,6 @@
 import sys
 import os
+from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import Literal, List
 from langchain_core.tools import tool
@@ -47,6 +48,7 @@ class GreenAgent():
         self.model_with_tools = self.llm.bind_tools(self.tools)
         self.model_with_structured_output = self.llm.with_structured_output(Criterios)
         self.memory = MemorySaver()
+        self.rate_limit = {'init_time':None,'token_count':0}
 
         # Define a new graph
         self.workflow = StateGraph(AgentState)
@@ -72,7 +74,7 @@ class GreenAgent():
 
         self.workflow.add_edge("tools", "agent")
         self.workflow.add_edge("respond", END)
-        self.graph = self.workflow.compile(checkpointer=self.memory,debug=True)
+        self.graph = self.workflow.compile(checkpointer=self.memory) #debug=True
 
     def call_model(self,state: AgentState):
         chain = prompt_agent | self.model_with_tools
@@ -101,6 +103,9 @@ class GreenAgent():
             return "respond"
         # Otherwise if there is, we continue
         else:
+            print("--------------------------")
+            print('/n')
+            print(last_message)
             return "continue"
         
     def analizer_page(self,initial_page:int,final_page:int):
