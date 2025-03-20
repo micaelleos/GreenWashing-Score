@@ -72,6 +72,7 @@ def retrieve_sections_page(initial_page:int,final_page:int):
 def save_uploadedfile(uploadedfile):
     if not os.path.exists(UPLOAD_DIR):
         os.makedirs(UPLOAD_DIR)
+        os.makedirs(PROCESSED_DOC)
     with open(os.path.join(UPLOAD_DIR, uploadedfile.name), "wb") as f:
         f.write(uploadedfile.getbuffer())
 

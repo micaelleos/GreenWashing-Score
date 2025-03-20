@@ -104,8 +104,7 @@ class GreenAgent():
         # Otherwise if there is, we continue
         else:
             print("--------------------------")
-            print('/n')
-            print(last_message)
+            print(last_message.usage_metadata['total_tokens'])
             return "continue"
         
     def analizer_page(self,initial_page:int,final_page:int):
