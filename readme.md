@@ -1,144 +1,154 @@
-# **Análise de Relatórios de ESG e Detecção de Greenwashing**
+# **ESG Report Analysis and Greenwashing Detection**  
 
-Este projeto é uma aplicação interativa desenvolvida com **Streamlit**, **LangChain**, e **LangGraph**, projetada para realizar a ingestão e análise de relatórios de Empresas com Compromissos com o Meio Ambiente, Social e Governança (ESG, na sigla em inglês). A ferramenta identifica potenciais indícios de **greenwashing** nos relatórios e atribui uma pontuação com base em critérios específicos. O usuário pode também pesquisar informações no documento por meio de um chat baseado em recuperação de conhecimento (*Retrieval-Augmented Generation* - RAG).
+This project is an interactive application developed with **Streamlit**, **LangChain**, and **LangGraph**, designed to ingest and analyze reports from companies with Environmental, Social, and Governance (ESG) commitments. The tool identifies potential signs of **greenwashing** in reports and assigns a score based on specific criteria. Users can also search for information within the document through a **Retrieval-Augmented Generation (RAG)**-based chat.  
 
----
+---  
 
-## **Funcionalidades**
-1. **Upload de Relatórios**:
-   - Permite ao usuário fazer o upload de arquivos de relatórios ESG no formato PDF ou texto.
-   
-2. **Análise Automática**:
-   - A ferramenta avalia o relatório com base em critérios predefinidos de risco de **greenwashing**, como:
-     - Linguagem vaga ou exagerada.
-     - Ausência de métricas claras.
-     - Relatos desproporcionais ou inconsistentes com dados financeiros ou de impacto ambiental.
+## **Features**  
 
-3. **Pontuação de Risco**:
-   - Atribui uma pontuação de risco ao relatório, indicando o grau de probabilidade de **greenwashing**.
+1. **Report Upload**:  
+   - Allows users to upload ESG reports in PDF or text format.  
 
-4. **Chat RAG**:
-   - Oferece um sistema de busca interativa, permitindo ao usuário consultar o conteúdo do relatório por meio de perguntas e respostas.
+2. **Automated Analysis**:  
+   - The tool evaluates the report based on predefined **greenwashing** risk criteria, such as:  
+     - Vague or exaggerated language.  
+     - Lack of clear metrics.  
+     - Disproportionate or inconsistent claims compared to financial or environmental impact data.  
 
-5. **Interface Intuitiva**:
-   - Desenvolvido com Streamlit, o app é de fácil navegação e visualização dos resultados.
+3. **Risk Scoring**:  
+   - Assigns a risk score to the report, indicating the likelihood of **greenwashing**.  
 
----
+4. **RAG Chat**:  
+   - Provides an interactive search system, allowing users to query the report content through Q&A.  
 
-## **Instalação**
-Siga os passos abaixo para configurar e executar o projeto em seu ambiente local.
+5. **Intuitive Interface**:  
+   - Built with Streamlit, ensuring easy navigation and result visualization.  
 
-### **Pré-requisitos**
-Certifique-se de que você tem as seguintes ferramentas instaladas:
-- Python 3.8 ou superior
-- pip (gerenciador de pacotes do Python)
+---  
 
-### **Passo 1: Clone o Repositório**
+## **Installation**  
+
+Follow the steps below to set up and run the project in your local environment.  
+
+### **Prerequisites**  
+
+Ensure you have the following tools installed:  
+- Python 3.8 or later  
+- pip (Python package manager)  
+
+### **Step 1: Clone the Repository**  
 ```bash
 git clone https://github.com/micaelleos/GreenWashing-Score.git
 cd GreenWashing-Score
-```
+```  
 
-### **Passo 2: Crie um Ambiente Virtual**
+### **Step 2: Create a Virtual Environment**  
 ```bash
 python -m venv venv
-source venv/bin/activate  # No Windows, use: venv\Scripts\activate
-```
+source venv/bin/activate  # On Windows, use: venv\Scripts\activate
+```  
 
-### **Passo 3: Instale as Dependências**
+### **Step 3: Install Dependencies**  
 ```bash
 pip install -r requirements.txt
-```
+```  
 
-### **Passo 4: Configure as Variáveis de Ambiente**
-Crie um arquivo `.env` na raiz do projeto e configure as seguintes variáveis:
+### **Step 4: Configure Environment Variables**  
+
+Create a `.env` file in the project root and set the following variables:  
 ```env
 OPENAI_API_KEY=your_openai_api_key
-LANGCHAIN_API_KEY=your_langchain_api_key
-```
+```  
 
-> ⚠️ Substitua `your_openai_api_key` e `your_langchain_api_key` pelas suas chaves de API correspondentes.
+> ⚠️ Replace `your_openai_api_key` with your actual API key.  
 
-### **Passo 5: Execute a Aplicação**
+### **Step 5: Run the Application**  
 ```bash
 streamlit run app.py
-```
+```  
 
-A aplicação estará disponível em [http://localhost:8501](http://localhost:8501).
+The application will be available at [http://localhost:8501](http://localhost:8501).  
 
----
+---  
 
-## **Estrutura do Projeto**
+## **Project Structure**  
 
 ```plaintext
 GreenWashing Score/
-├── app.py                 # Arquivo principal da aplicação Streamlit
-├── analysis/
-│   ├── risk_scoring.py    # Módulo para cálculo da pontuação de risco
-│   ├── criteria.json      # Critérios de análise de greenwashing
-├── chat/
-│   ├── document_loader.py # Carregamento e processamento de documentos
-│   ├── chat_rag.py        # Implementação do Chat RAG com LangChain
-├── data/                  # Diretório para armazenar arquivos temporários
-├── requirements.txt       # Lista de dependências
-├── README.md              # Documentação do projeto
-├── .env.example           # Exemplo de configuração de variáveis de ambiente
-└── .gitignore             # Arquivos a serem ignorados pelo Git
-```
+├── app.py                 # Main Streamlit application file
+├── src
+|   ├── scripts
+|   |   ├── analysis/
+|   |   │   ├── risk_scoring.py    # Risk scoring module
+|   |   │   ├── criteria.json      # Greenwashing analysis criteria
+|   |   ├── chat/
+|   |   │   ├── document_loader.py # Document loading and processing
+|   |   │   ├── chat_rag.py        # RAG Chat implementation with LangChain
+├── data/                  # Directory for temporary file storage
+├── requirements.txt       # Dependency list
+├── README.md              # Project documentation
+├── .env.example           # Example environment variable configuration
+└── .gitignore             # Git ignore file
+```  
 
----
+---  
 
-## **Licenciamento**
-Este software está licenciado sob os seguintes termos:
+## **Licensing**  
 
-### **1. Uso Pessoal e Educacional**
-Você pode usar, modificar e executar este software **apenas para fins pessoais ou educacionais, sem custo**, desde que o aviso de copyright e os termos de licença sejam incluídos.
+This software is licensed under the following terms:  
 
-### **2. Uso Comercial**
-Qualquer uso do software para fins comerciais **requer a compra de uma licença comercial**. Exemplos de uso comercial incluem:
-- Integração em produtos ou serviços vendidos ou licenciados.
-- Uso em organizações com fins lucrativos.
-- Qualquer atividade geradora de receita.
+### **1. Personal and Educational Use**  
+You may use, modify, and run this software **only for personal or educational purposes, free of charge**, as long as the copyright notice and license terms remain included.  
 
-#### Como Adquirir uma Licença Comercial
-Entre em contato pelo e-mail [micaelle.osouza@gmail.com] para obter informações sobre planos de licenciamento.
+### **2. Commercial Use**  
+Any commercial use of this software **requires the purchase of a commercial license**. Examples of commercial use include:  
+- Integration into products or services that are sold or licensed.  
+- Use within for-profit organizations.  
+- Any revenue-generating activities.  
 
-### **3. Proibições**
-- Não é permitido sublicenciar, vender ou redistribuir este software sem autorização por escrito.
-- Não é permitido remover ou alterar este aviso de licença em qualquer versão do software.
+#### How to Obtain a Commercial License  
+Contact us via email at [micaelle.osouza@gmail.com] for licensing details.  
 
----
+### **3. Restrictions**  
+- You may not sublicense, sell, or redistribute this software without written authorization.  
+- You may not remove or modify this license notice in any version of the software.  
 
-## **Contribuindo**
-Contribuições são bem-vindas! Siga os passos abaixo para colaborar:
+---  
 
-1. Faça um *fork* do projeto.
-2. Crie uma nova *branch* para suas alterações:
+## **Contributing**  
+
+Contributions are welcome! Follow these steps to collaborate:  
+
+1. Fork the project.  
+2. Create a new branch for your changes:  
    ```bash
-   git checkout -b minha-feature
-   ```
-3. Faça *commit* das suas alterações:
+   git checkout -b my-feature
+   ```  
+3. Commit your changes:  
    ```bash
-   git commit -m "Adiciona nova feature"
-   ```
-4. Envie para a *branch* principal:
+   git commit -m "Add new feature"
+   ```  
+4. Push to the main branch:  
    ```bash
-   git push origin minha-feature
-   ```
-5. Abra um *Pull Request* no GitHub.
+   git push origin my-feature
+   ```  
+5. Open a **Pull Request** on GitHub.  
 
----
+---  
 
-## **Tecnologias Utilizadas**
-- **[Streamlit](https://streamlit.io/):** Para criação da interface interativa.
-- **[LangChain](https://www.langchain.com/):** Para implementação de modelos de linguagem e recuperação de dados.
-- **[LangGraph](https://github.com/langgraph):** Para orquestração avançada de fluxos de análise.
-- **Python:** Linguagem principal do projeto.
+## **Technologies Used**  
 
----
+- **[Streamlit](https://streamlit.io/)**: For building the interactive interface.  
+- **[LangChain](https://www.langchain.com/)**: For implementing language models and data retrieval.  
+- **[LangGraph](https://github.com/langgraph)**: For advanced workflow orchestration.  
+- **Python**: The main programming language for this project.  
 
-## **Contato**
-Para dúvidas ou suporte, entre em contato:
-- **E-mail:** micaelle.osouza@gmail.com
-- **GitHub:** [Micaelle Souza](https://github.com/micaelleos)
+---  
+
+## **Contact**  
+
+For questions or support, reach out via:  
+- **Email**: micaelle.osouza@gmail.com  
+- **GitHub**: [Micaelle Souza](https://github.com/micaelleos)  
+
 
